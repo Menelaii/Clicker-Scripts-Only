@@ -13,12 +13,12 @@ public class AttackResultViewer
 
     public void DropDamageView(int damage, DamageType type, Vector3 position)
     {
-        DamageView view = _gameFactory.CreateDamageView(damage, type, position);
+        DamageView view = _gameFactory.SpawnDamageView(damage, type, position);
         _itemThrower.Throw(view.GetComponent<Rigidbody2D>());
     }
 
     public void DropDodgeView(Vector3 position)
     {
-        _gameFactory.CreateDodgedMessage(position);
+        _gameFactory.SpawnDodgedMessage(position);
     }
 }

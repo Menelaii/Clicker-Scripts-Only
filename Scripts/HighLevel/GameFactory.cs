@@ -8,6 +8,7 @@ public class GameFactory
     private readonly Prefabs _prefabs;
     private readonly Player _player;
     private readonly ItemThrower _itemThrower;
+    private readonly TextViewSpawner _textViewSpawner;
     private readonly BodyPartsGenerationStaticData _generationStaticData;
     private readonly Transform _optionalPanelsParent;
 
@@ -18,7 +19,8 @@ public class GameFactory
     public event Action<Combatant> EnemyCreated;
 
     public GameFactory(Prefabs prefabs, Player player, ItemThrower itemThrower,
-        BodyPartsGenerationStaticData generationStaticData, Transform optionalPanelsParent)
+        BodyPartsGenerationStaticData generationStaticData, Transform optionalPanelsParent,
+        Transform poolObjectsParent)
     {
         _prefabs = prefabs;
         _player = player;
@@ -27,6 +29,7 @@ public class GameFactory
         AttackResultViewer = new AttackResultViewer(this, itemThrower);
         LootSpawner = new LootSpawner(this, _itemThrower);
         _optionalPanelsParent = optionalPanelsParent;
+        _textViewSpawner = new TextViewSpawner(prefabs, poolObjectsParent);
     }
 
     public Combatant CreateEnemy(EnemyStaticData staticData, Vector3 position)
@@ -94,14 +97,6 @@ public class GameFactory
         return coins.ToArray();
     }
 
-    public DamageView CreateDamageView(int damage, DamageType type, Vector3 position)
-    {
-        var view = Object.Instantiate(_prefabs.DamageView, position, Quaternion.identity);
-        view.Init(damage, type);
-
-        return view;
-    }
-
     public LootBox CreateLootBox(LootBox prefab, BodyPart bodyPartloot, Vector3 position)
     {
         LootBox lootBox = Object.Instantiate(prefab, position, Quaternion.identity);
@@ -113,17 +108,19 @@ public class GameFactory
         return lootBox;
     }
 
-    public FlyingText CreateDodgedMessage(Vector3 position)
+    public DamageView SpawnDamageView(int damage, DamageType type, Vector3 position)
     {
-        return Object.Instantiate(_prefabs.DodgeView, position, Quaternion.identity);
+        return _textViewSpawner.SpawnDamageView(damage, type, position);
     }
 
-    public FlyingText CreateCoinValueView(int value, Vector3 position)
+    public FlyingText SpawnDodgedMessage(Vector3 position)
     {
-        FlyingText ft = Object.Instantiate(_prefabs.TotalValueView, position, Quaternion.identity);
-        ft.Init(value.ToString());
+        return _textViewSpawner.SpawnDodgedMessage(position);
+    }
 
-        return ft;
+    public FlyingText SpawnCoinValueView(int value, Vector3 position)
+    {
+        return _textViewSpawner.SpawnCoinValueView(value, position);
     }
 
     public PlayerView CreatePlayerView(Vector3 position)
@@ -138,6 +135,6 @@ public class GameFactory
     {
         coin.Destroyed -= OnCoinDestroyed;
 
-        CreateCoinValueView(coin.Value, coin.transform.position);
+        SpawnCoinValueView(coin.Value, coin.transform.position);
     }
 }

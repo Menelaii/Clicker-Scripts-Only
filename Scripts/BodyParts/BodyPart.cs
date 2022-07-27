@@ -4,6 +4,8 @@ using UnityEngine;
 [Serializable]
 public abstract class BodyPart
 {
+    private static readonly int DEFAULT_MAX_LEVEL = 100;
+
     [SerializeField] private SetId _setId;
     [SerializeField] private int _level;
     [SerializeField] private Sprite _icon;
@@ -33,6 +35,9 @@ public abstract class BodyPart
 
     public virtual void Upgrade()
     {
+        if (_level + 1 > DEFAULT_MAX_LEVEL)
+            return;
+
         _level++;
         foreach (var bodyPartStat in Stats)
         {

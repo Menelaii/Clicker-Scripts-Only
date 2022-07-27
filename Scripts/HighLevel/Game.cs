@@ -29,6 +29,7 @@ public class Game : MonoBehaviour
     [SerializeField] private ItemThrower _itemThrower;
     [SerializeField] private PlayerView _playerView;
     [SerializeField] private Transform _optionalPanelsParent;
+    [SerializeField] private Transform _poolObjectsParent;
     [SerializeField] private Prefabs _prefabs;
 
     private Player _player;
@@ -53,7 +54,8 @@ public class Game : MonoBehaviour
 
         InitPlayer();
 
-        _gameFactory = new GameFactory(_prefabs, _player, _itemThrower, _bodyPartsGenerationSettings, _optionalPanelsParent);
+        _gameFactory = new GameFactory(_prefabs, _player, _itemThrower,
+            _bodyPartsGenerationSettings, _optionalPanelsParent, _poolObjectsParent);
 
         InitPlayerViews();
 
